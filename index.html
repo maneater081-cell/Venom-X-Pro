@@ -7,214 +7,235 @@
 <title>VENOM-X PRO</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#090e19;color:#eaf0fa;font-family:Tahoma,Arial,sans-serif}
-header{padding:24px 18px;text-align:center;background:#111b2c;border-bottom:1px solid #263950}
-h1{margin:0;color:#00e0ad;letter-spacing:3px;font-size:29px}
-header p{color:#91a4ba;font-size:12px}
-main{max-width:760px;margin:auto;padding:18px}
-.panel{background:#111b2b;border:1px solid #24344a;border-radius:15px;padding:17px;margin-bottom:18px}
-h2{font-size:17px;margin:0 0 15px;color:#00e0ad}
-input,textarea,select{width:100%;padding:13px;margin:7px 0 12px;border-radius:9px;border:1px solid #34465e;background:#091321;color:white;font:14px Tahoma}
-textarea{min-height:85px;resize:vertical}
-button{border:0;border-radius:9px;padding:12px 16px;font-weight:bold;cursor:pointer;font-size:13px}
-.primary{background:#00d9a5;color:#06130f;width:100%}
-.secondary{background:#263950;color:white}
-.danger{background:#492431;color:#ffb9c7}
-.agent{background:#0c1625;border:1px solid #2a3d55;border-radius:12px;padding:14px;margin:12px 0}
-.agent h3{margin:0 0 9px;color:#fff;font-size:16px}
-.agent p{font-size:13px;color:#aebdd0;line-height:1.8;overflow-wrap:anywhere}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-.actions button{flex:1}
-.tag{display:inline-block;background:#143d3a;color:#5fffd4;padding:5px 9px;border-radius:20px;font-size:11px}
-.empty{text-align:center;color:#8293a8;padding:24px;font-size:13px}
-#count{color:#9eafc3;font-size:12px}
-footer{text-align:center;color:#71839a;font-size:11px;padding:20px}
+body{margin:0;background:#090e19;color:#edf3fc;font-family:Tahoma,Arial}
+header{text-align:center;padding:22px;background:#111c2c;border-bottom:1px solid #263b50}
+h1{color:#00e0ad;letter-spacing:3px;margin:0}
+header p{color:#91a5bb;font-size:11px}
+main{max-width:800px;margin:auto;padding:15px}
+.panel{background:#111b2b;border:1px solid #26394f;border-radius:14px;padding:16px;margin-bottom:15px}
+h2{font-size:16px;color:#00e0ad;margin-top:0}
+textarea,input{width:100%;padding:13px;border-radius:9px;border:1px solid #34475e;background:#091321;color:white;font:14px Tahoma;margin:7px 0 12px}
+textarea{min-height:100px;resize:vertical}
+button{border:0;border-radius:9px;padding:12px;background:#00d9a5;color:#071710;font-weight:bold;cursor:pointer}
+button.secondary{background:#263950;color:white}
+button.danger{background:#492431;color:#ffc0cd}
+.full{width:100%}
+.agent{background:#0b1625;border:1px solid #293c52;border-radius:10px;padding:12px;margin:9px 0}
+.agent strong{color:#fff}
+.agent p{color:#a9b8ca;font-size:12px;line-height:1.8}
+.tag{font-size:11px;color:#5fffd4;background:#143a36;padding:5px 9px;border-radius:20px}
+.result{background:#0b1825;border-right:3px solid #00d9a5;padding:13px;border-radius:9px;margin-top:12px;line-height:2;font-size:13px}
+.muted{color:#91a2b6;font-size:12px;line-height:1.8}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row button{flex:1}
+#agents{margin-top:12px}
+footer{text-align:center;color:#687d94;font-size:11px;padding:20px}
 </style>
 </head>
 <body>
 
 <header>
 <h1>VENOM-X</h1>
-<p>INTELLIGENT AGENT COMMAND CENTER</p>
+<p>UNIFIED INTELLIGENCE COMMAND CENTER</p>
 </header>
 
 <main>
+
 <section class="panel">
-<h2>ساخت ایجنت جدید</h2>
-<form id="agentForm">
-<input id="agentName" placeholder="نام ایجنت" required maxlength="40">
-<input id="agentRole" placeholder="تخصص ایجنت؛ مثلاً برنامه‌نویس" required maxlength="60">
-<textarea id="agentTask" placeholder="وظایف و دستورالعمل‌های ایجنت..." required maxlength="1000"></textarea>
-<button class="primary" id="saveBtn" type="submit">＋ ساخت ایجنت</button>
-<button class="secondary" id="cancelBtn" type="button" style="display:none;width:100%;margin-top:8px">لغو ویرایش</button>
-</form>
+<h2>مرکز فرماندهی</h2>
+<p class="muted">درخواستت را بنویس. سیستم تخصص‌های موردنیاز را شناسایی می‌کند.</p>
+<textarea id="question" placeholder="مثلاً یک وب‌سایت حرفه‌ای طراحی کن..."></textarea>
+<button class="full" onclick="analyze()">تحلیل و انتخاب ایجنت‌ها</button>
+<div id="result"></div>
 </section>
 
 <section class="panel">
-<h2>مدیریت ایجنت‌ها</h2>
-<div id="count">تعداد ایجنت‌ها: ۰</div>
-<input id="search" placeholder="جست‌وجو در ایجنت‌ها...">
-<div id="agents">
-<div class="empty">هنوز ایجنتی ساخته نشده است.</div>
-</div>
+<h2>تیم تخصصی VENOM-X</h2>
+<div id="team"></div>
 </section>
+
+<section class="panel">
+<h2>افزودن ایجنت اختصاصی</h2>
+<input id="newName" placeholder="نام ایجنت">
+<input id="newRole" placeholder="تخصص ایجنت">
+<textarea id="newTask" placeholder="وظایف و دستورالعمل‌های ایجنت"></textarea>
+<button class="full" onclick="addAgent()">＋ افزودن به تیم</button>
+</section>
+
+<section class="panel">
+<h2>مدیریت ایجنت‌های اختصاصی</h2>
+<div id="customAgents"></div>
+</section>
+
 </main>
 
-<footer>VENOM-X PRO · AGENT FACTORY · VERSION 2.0</footer>
+<footer>VENOM-X PRO · UNIFIED AGENT SYSTEM</footer>
 
 <script>
-const STORAGE_KEY = "venom_x_agents_v2";
-let agents = [];
-let editingId = null;
+const KEY = "venom_x_unified_agents";
 
-const form = document.getElementById("agentForm");
-const nameInput = document.getElementById("agentName");
-const roleInput = document.getElementById("agentRole");
-const taskInput = document.getElementById("agentTask");
-const saveBtn = document.getElementById("saveBtn");
-const cancelBtn = document.getElementById("cancelBtn");
-const list = document.getElementById("agents");
-const count = document.getElementById("count");
-const search = document.getElementById("search");
+const builtins = [
+{id:"research",name:"Researcher",role:"تحقیق و جست‌وجو",task:"تحقیق، بررسی منابع و جمع‌آوری اطلاعات",keys:["تحقیق","جستجو","جست‌وجو","منبع","اینترنت","اطلاعات","خبر"]},
+{id:"developer",name:"Developer",role:"برنامه‌نویسی",task:"طراحی نرم‌افزار، کدنویسی و رفع خطا",keys:["کد","برنامه","سایت","وب","اپلیکیشن","اپ","خطا","پایتون","جاوا","html","نرم افزار"]},
+{id:"analyst",name:"Analyst",role:"تحلیل اطلاعات",task:"تحلیل داده‌ها، مقایسه و استخراج نتایج",keys:["تحلیل","بررسی","مقایسه","داده","آمار","نتیجه","گزارش"]},
+{id:"strategist",name:"Strategist",role:"برنامه‌ریزی و مدیریت",task:"طراحی برنامه، اولویت‌بندی و مدیریت پروژه",keys:["برنامه ریزی","برنامه‌ریزی","مدیریت","پروژه","استراتژی","هدف","زمان بندی"]},
+{id:"creative",name:"Creative",role:"خلاقیت و تولید محتوا",task:"ایده‌پردازی، نوشتن و تولید محتوای خلاقانه",keys:["ایده","محتوا","متن","داستان","موسیقی","آهنگ","شعر","طراحی","تصویر"]},
+{id:"coordinator",name:"Coordinator",role:"هماهنگ‌کننده مرکزی",task:"تشخیص درخواست و هماهنگی تخصص‌های موردنیاز",keys:[]}
+];
 
-function loadAgents(){
-  try{
-    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    agents = Array.isArray(data) ? data : [];
-  }catch(e){
-    agents = [];
-  }
-  render();
+let custom = [];
+
+function load(){
+ try{
+  const saved = JSON.parse(localStorage.getItem(KEY) || "[]");
+  custom = Array.isArray(saved) ? saved : [];
+ }catch(e){custom=[]}
+ render();
 }
 
-function saveAgents(){
-  try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(agents));
-    return true;
-  }catch(e){
-    alert("ذخیره‌سازی انجام نشد. فضای ذخیره مرورگر را بررسی کن.");
-    return false;
-  }
+function save(){
+ try{
+  localStorage.setItem(KEY,JSON.stringify(custom));
+  return true;
+ }catch(e){
+  alert("ذخیره‌سازی ناموفق بود.");
+  return false;
+ }
+}
+
+function allAgents(){
+ return [...builtins,...custom];
 }
 
 function render(){
-  const query = search.value.trim().toLowerCase();
-  const filtered = agents.filter(a =>
-    [a.name,a.role,a.task].join(" ").toLowerCase().includes(query)
-  );
+ document.getElementById("team").innerHTML =
+ builtins.map(a=>`
+ <div class="agent">
+ <strong>${a.name}</strong>
+ <p>${a.role} — ${a.task}</p>
+ <span class="tag">ایجنت اصلی</span>
+ </div>`).join("");
 
-  count.textContent = "تعداد ایجنت‌ها: " + agents.length;
+ const area=document.getElementById("customAgents");
+ area.innerHTML="";
 
-  if(!filtered.length){
-    list.innerHTML = '<div class="empty">ایجنتی برای نمایش پیدا نشد.</div>';
-    return;
-  }
+ if(!custom.length){
+  area.innerHTML='<p class="muted">هنوز ایجنت اختصاصی اضافه نکرده‌ای.</p>';
+  return;
+ }
 
-  list.innerHTML = "";
+ custom.forEach(a=>{
+  const div=document.createElement("div");
+  div.className="agent";
 
-  filtered.forEach(agent => {
-    const card = document.createElement("article");
-    card.className = "agent";
+  const name=document.createElement("strong");
+  name.textContent=a.name;
 
-    const title = document.createElement("h3");
-    title.textContent = agent.name;
+  const role=document.createElement("p");
+  role.textContent=a.role+" — "+a.task;
 
-    const tag = document.createElement("span");
-    tag.className = "tag";
-    tag.textContent = agent.role;
+  const btn=document.createElement("button");
+  btn.className="danger";
+  btn.textContent="حذف ایجنت";
+  btn.onclick=()=>removeAgent(a.id);
 
-    const description = document.createElement("p");
-    description.textContent = agent.task;
-
-    const date = document.createElement("p");
-    date.textContent = "تاریخ ایجاد: " + agent.created;
-
-    const actions = document.createElement("div");
-    actions.className = "actions";
-
-    const edit = document.createElement("button");
-    edit.className = "secondary";
-    edit.textContent = "ویرایش";
-    edit.onclick = () => editAgent(agent.id);
-
-    const remove = document.createElement("button");
-    remove.className = "danger";
-    remove.textContent = "حذف";
-    remove.onclick = () => deleteAgent(agent.id);
-
-    actions.append(edit,remove);
-    card.append(title,tag,description,date,actions);
-    list.append(card);
-  });
+  div.append(name,role,btn);
+  area.append(div);
+ });
 }
 
-form.addEventListener("submit", function(e){
-  e.preventDefault();
+function addAgent(){
+ const name=document.getElementById("newName").value.trim();
+ const role=document.getElementById("newRole").value.trim();
+ const task=document.getElementById("newTask").value.trim();
 
-  const name = nameInput.value.trim();
-  const role = roleInput.value.trim();
-  const task = taskInput.value.trim();
+ if(!name||!role||!task){
+  alert("هر سه قسمت را کامل کن.");
+  return;
+ }
 
-  if(!name || !role || !task) return;
+ custom.push({
+  id:"custom_"+Date.now(),
+  name,role,task
+ });
 
-  if(editingId !== null){
-    const index = agents.findIndex(a => a.id === editingId);
-    if(index === -1) return;
-
-    agents[index] = {...agents[index],name,role,task};
-  }else{
-    agents.unshift({
-      id: Date.now().toString() + Math.random().toString(36).slice(2,7),
-      name,role,task,
-      created: new Date().toLocaleDateString("fa-IR")
-    });
-  }
-
-  if(saveAgents()){
-    resetForm();
-    render();
-  }
-});
-
-function editAgent(id){
-  const agent = agents.find(a => a.id === id);
-  if(!agent) return;
-
-  editingId = id;
-  nameInput.value = agent.name;
-  roleInput.value = agent.role;
-  taskInput.value = agent.task;
-  saveBtn.textContent = "ذخیره تغییرات";
-  cancelBtn.style.display = "block";
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-
-function deleteAgent(id){
-  if(!confirm("این ایجنت حذف شود؟")) return;
-
-  const previous = agents;
-  agents = agents.filter(a => a.id !== id);
-
-  if(!saveAgents()){
-    agents = previous;
-    return;
-  }
-
-  if(editingId === id) resetForm();
+ if(save()){
+  document.getElementById("newName").value="";
+  document.getElementById("newRole").value="";
+  document.getElementById("newTask").value="";
   render();
+ }
 }
 
-function resetForm(){
-  form.reset();
-  editingId = null;
-  saveBtn.textContent = "＋ ساخت ایجنت";
-  cancelBtn.style.display = "none";
+function removeAgent(id){
+ if(!confirm("این ایجنت حذف شود؟"))return;
+ const old=custom;
+ custom=custom.filter(a=>a.id!==id);
+ if(!save())custom=old;
+ render();
 }
 
-cancelBtn.addEventListener("click",resetForm);
-search.addEventListener("input",render);
+function analyze(){
+ const q=document.getElementById("question").value.trim();
+ const output=document.getElementById("result");
 
-loadAgents();
+ if(!q){
+  alert("ابتدا درخواستت را بنویس.");
+  return;
+ }
+
+ const lower=q.toLowerCase();
+ const selected=[];
+
+ builtins.forEach(agent=>{
+  if(agent.id==="coordinator")return;
+  if(agent.keys.some(k=>lower.includes(k.toLowerCase()))){
+   selected.push(agent);
+  }
+ });
+
+ custom.forEach(agent=>{
+  const words=(agent.name+" "+agent.role+" "+agent.task)
+   .toLowerCase().split(/[\s،,.]+/)
+   .filter(w=>w.length>2);
+
+  if(words.some(w=>lower.includes(w))){
+   selected.push(agent);
+  }
+ });
+
+ if(!selected.length){
+  selected.push(builtins.find(a=>a.id==="analyst"));
+ }
+
+ const coordinator=builtins.find(a=>a.id==="coordinator");
+
+ output.innerHTML="";
+ const box=document.createElement("div");
+ box.className="result";
+
+ const title=document.createElement("strong");
+ title.textContent="هماهنگ‌کننده مرکزی: "+coordinator.name;
+
+ const intro=document.createElement("p");
+ intro.textContent="درخواست دریافت شد. تخصص‌های پیشنهادی برای انجام آن:";
+
+ const list=document.createElement("ul");
+ selected.forEach(a=>{
+  const li=document.createElement("li");
+  li.textContent=a.name+" — "+a.role;
+  list.append(li);
+ });
+
+ const note=document.createElement("p");
+ note.className="muted";
+ note.textContent="این نسخه فقط تخصص‌های مرتبط را با قواعد اولیه انتخاب می‌کند؛ هنوز پاسخ هوش مصنوعی یا تحقیق واقعی تولید نمی‌کند.";
+
+ box.append(title,intro,list,note);
+ output.append(box);
+}
+
+load();
 </script>
 </body>
 </html>
