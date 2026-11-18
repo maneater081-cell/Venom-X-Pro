@@ -174,7 +174,7 @@ function removeAgent(id){
  if(!save())custom=old;
  render();
 }
-
+ 
 function analyze(){
  const q=document.getElementById("question").value.trim();
  const output=document.getElementById("result");
@@ -184,58 +184,95 @@ function analyze(){
   return;
  }
 
- const lower=q.toLowerCase();
- const selected=[];
+ const text=q.toLowerCase().replace(/ي/g,"ی").replace(/ك/g,"ک");
 
- builtins.forEach(agent=>{
-  if(agent.id==="coordinator")return;
-  if(agent.keys.some(k=>lower.includes(k.toLowerCase()))){
-   selected.push(agent);
+ const categories={
+  research:[
+   "تحقیق","جستجو","جست‌وجو","اینترنت","منبع","مقاله",
+   "اطلاعات","خبر","پیدا کن","مطالعه","بررسی منابع","research"
+  ],
+  developer:[
+   "کد","برنامه","برنامه نویسی","برنامه‌نویسی","سایت",
+   "وب","اپلیکیشن","اپ","نرم افزار","نرم‌افزار",
+   "ساخت نرم","رفع خطا","باگ","پایتون","جاوا","html","developer"
+  ],
+  analyst:[
+   "تحلیل","مقایسه","آمار","داده","ارزیابی","نتیجه",
+   "بررسی","گزارش","محاسبه","analyst"
+  ],
+  strategist:[
+   "برنامه ریزی","برنامه‌ریزی","مدیریت","پروژه",
+   "استراتژی","هدف","زمان بندی","زمان‌بندی","اولویت","strategist"
+  ],
+  creative:[
+   "ایده","محتوا","متن","داستان","موسیقی","آهنگ",
+   "شعر","طراحی","تصویر","سناریو","خلاقانه","creative"
+  ]
+ };
+
+ const matched=[];
+ const agents={
+  research:builtins.find(a=>a.id==="research"),
+  developer:builtins.find(a=>a.id==="developer"),
+  analyst:builtins.find(a=>a.id==="analyst"),
+  strategist:builtins.find(a=>a.id==="strategist"),
+  creative:builtins.find(a=>a.id==="creative")
+ };
+
+ for(const [category,words] of Object.entries(categories)){
+  if(words.some(word=>text.includes(word))){
+   matched.push(agents[category]);
   }
- });
+ }
 
  custom.forEach(agent=>{
   const words=(agent.name+" "+agent.role+" "+agent.task)
-   .toLowerCase().split(/[\s،,.]+/)
+   .toLowerCase()
+   .split(/[\s،,.]+/)
    .filter(w=>w.length>2);
 
-  if(words.some(w=>lower.includes(w))){
-   selected.push(agent);
+  if(words.some(w=>text.includes(w)) &&
+     !matched.some(a=>a.id===agent.id)){
+   matched.push(agent);
   }
  });
 
- if(!selected.length){
-  selected.push(builtins.find(a=>a.id==="analyst"));
+ if(!matched.length){
+  matched.push(agents.analyst);
  }
 
- const coordinator=builtins.find(a=>a.id==="coordinator");
+ const order={
+  research:1,
+  analyst:2,
+  strategist:3,
+  developer:4,
+  creative:5
+ };
+
+ matched.sort((a,b)=>(order[a.id]||6)-(order[b.id]||6));
 
  output.innerHTML="";
  const box=document.createElement("div");
  box.className="result";
 
  const title=document.createElement("strong");
- title.textContent="هماهنگ‌کننده مرکزی: "+coordinator.name;
+ title.textContent="Coordinator | هماهنگ‌کننده مرکزی";
 
  const intro=document.createElement("p");
- intro.textContent="درخواست دریافت شد. تخصص‌های پیشنهادی برای انجام آن:";
+ intro.textContent="درخواست به تخصص‌های زیر تقسیم شد:";
 
- const list=document.createElement("ul");
- selected.forEach(a=>{
+ const list=document.createElement("ol");
+
+ matched.forEach((agent,index)=>{
   const li=document.createElement("li");
-  li.textContent=a.name+" — "+a.role;
+  li.textContent=(index+1)+". "+agent.name+" — "+agent.role;
   list.append(li);
  });
 
  const note=document.createElement("p");
  note.className="muted";
- note.textContent="این نسخه فقط تخصص‌های مرتبط را با قواعد اولیه انتخاب می‌کند؛ هنوز پاسخ هوش مصنوعی یا تحقیق واقعی تولید نمی‌کند.";
+ note.textContent="این انتخاب بر اساس کلیدواژه‌هاست و هنوز تحلیل معنایی هوش مصنوعی انجام نمی‌شود.";
 
  box.append(title,intro,list,note);
  output.append(box);
 }
-
-load();
-</script>
-</body>
-</html>
