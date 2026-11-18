@@ -2,43 +2,219 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VENOM-X</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090e19">
+<title>VENOM-X PRO</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#10131b;color:#eee;font-family:Arial,sans-serif}
-header{padding:25px;text-align:center;background:#191f2c;border-bottom:2px solid #00d9a5}
-h1{color:#00d9a5;letter-spacing:3px}
-main{max-width:650px;margin:30px auto;padding:20px}
-.card{background:#1c2331;padding:20px;border-radius:14px}
-textarea{width:100%;height:110px;background:#10131b;color:white;border:1px solid #465268;border-radius:9px;padding:12px;font-size:16px}
-button{background:#00d9a5;color:#10131b;border:0;border-radius:8px;padding:12px 22px;font-weight:bold;margin-top:12px}
-#reply{white-space:pre-wrap;margin-top:20px;line-height:1.9}
-small{color:#9ba8ba}
+body{margin:0;background:#090e19;color:#eaf0fa;font-family:Tahoma,Arial,sans-serif}
+header{padding:24px 18px;text-align:center;background:#111b2c;border-bottom:1px solid #263950}
+h1{margin:0;color:#00e0ad;letter-spacing:3px;font-size:29px}
+header p{color:#91a4ba;font-size:12px}
+main{max-width:760px;margin:auto;padding:18px}
+.panel{background:#111b2b;border:1px solid #24344a;border-radius:15px;padding:17px;margin-bottom:18px}
+h2{font-size:17px;margin:0 0 15px;color:#00e0ad}
+input,textarea,select{width:100%;padding:13px;margin:7px 0 12px;border-radius:9px;border:1px solid #34465e;background:#091321;color:white;font:14px Tahoma}
+textarea{min-height:85px;resize:vertical}
+button{border:0;border-radius:9px;padding:12px 16px;font-weight:bold;cursor:pointer;font-size:13px}
+.primary{background:#00d9a5;color:#06130f;width:100%}
+.secondary{background:#263950;color:white}
+.danger{background:#492431;color:#ffb9c7}
+.agent{background:#0c1625;border:1px solid #2a3d55;border-radius:12px;padding:14px;margin:12px 0}
+.agent h3{margin:0 0 9px;color:#fff;font-size:16px}
+.agent p{font-size:13px;color:#aebdd0;line-height:1.8;overflow-wrap:anywhere}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions button{flex:1}
+.tag{display:inline-block;background:#143d3a;color:#5fffd4;padding:5px 9px;border-radius:20px;font-size:11px}
+.empty{text-align:center;color:#8293a8;padding:24px;font-size:13px}
+#count{color:#9eafc3;font-size:12px}
+footer{text-align:center;color:#71839a;font-size:11px;padding:20px}
 </style>
 </head>
 <body>
+
 <header>
 <h1>VENOM-X</h1>
-<small>YOUR INTELLIGENT AI ASSISTANT</small>
+<p>INTELLIGENT AGENT COMMAND CENTER</p>
 </header>
+
 <main>
-<div class="card">
-<h3>خوش آمدی</h3>
-<p>مرکز فرماندهی VENOM-X آماده است.</p>
-<textarea id="message" placeholder="پیام خود را بنویس..."></textarea>
-<br>
-<button onclick="sendMessage()">ارسال پیام</button>
-<div id="reply"></div>
+<section class="panel">
+<h2>ساخت ایجنت جدید</h2>
+<form id="agentForm">
+<input id="agentName" placeholder="نام ایجنت" required maxlength="40">
+<input id="agentRole" placeholder="تخصص ایجنت؛ مثلاً برنامه‌نویس" required maxlength="60">
+<textarea id="agentTask" placeholder="وظایف و دستورالعمل‌های ایجنت..." required maxlength="1000"></textarea>
+<button class="primary" id="saveBtn" type="submit">＋ ساخت ایجنت</button>
+<button class="secondary" id="cancelBtn" type="button" style="display:none;width:100%;margin-top:8px">لغو ویرایش</button>
+</form>
+</section>
+
+<section class="panel">
+<h2>مدیریت ایجنت‌ها</h2>
+<div id="count">تعداد ایجنت‌ها: ۰</div>
+<input id="search" placeholder="جست‌وجو در ایجنت‌ها...">
+<div id="agents">
+<div class="empty">هنوز ایجنتی ساخته نشده است.</div>
 </div>
+</section>
 </main>
+
+<footer>VENOM-X PRO · AGENT FACTORY · VERSION 2.0</footer>
+
 <script>
-function sendMessage(){
-const msg=document.getElementById('message').value.trim();
-if(!msg)return;
-document.getElementById('reply').textContent=
-"پیام دریافت شد:\n"+msg+"\n\nاتصال هوش مصنوعی در مرحله بعد راه‌اندازی می‌شود.";
+const STORAGE_KEY = "venom_x_agents_v2";
+let agents = [];
+let editingId = null;
+
+const form = document.getElementById("agentForm");
+const nameInput = document.getElementById("agentName");
+const roleInput = document.getElementById("agentRole");
+const taskInput = document.getElementById("agentTask");
+const saveBtn = document.getElementById("saveBtn");
+const cancelBtn = document.getElementById("cancelBtn");
+const list = document.getElementById("agents");
+const count = document.getElementById("count");
+const search = document.getElementById("search");
+
+function loadAgents(){
+  try{
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    agents = Array.isArray(data) ? data : [];
+  }catch(e){
+    agents = [];
+  }
+  render();
 }
+
+function saveAgents(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(agents));
+    return true;
+  }catch(e){
+    alert("ذخیره‌سازی انجام نشد. فضای ذخیره مرورگر را بررسی کن.");
+    return false;
+  }
+}
+
+function render(){
+  const query = search.value.trim().toLowerCase();
+  const filtered = agents.filter(a =>
+    [a.name,a.role,a.task].join(" ").toLowerCase().includes(query)
+  );
+
+  count.textContent = "تعداد ایجنت‌ها: " + agents.length;
+
+  if(!filtered.length){
+    list.innerHTML = '<div class="empty">ایجنتی برای نمایش پیدا نشد.</div>';
+    return;
+  }
+
+  list.innerHTML = "";
+
+  filtered.forEach(agent => {
+    const card = document.createElement("article");
+    card.className = "agent";
+
+    const title = document.createElement("h3");
+    title.textContent = agent.name;
+
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = agent.role;
+
+    const description = document.createElement("p");
+    description.textContent = agent.task;
+
+    const date = document.createElement("p");
+    date.textContent = "تاریخ ایجاد: " + agent.created;
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    const edit = document.createElement("button");
+    edit.className = "secondary";
+    edit.textContent = "ویرایش";
+    edit.onclick = () => editAgent(agent.id);
+
+    const remove = document.createElement("button");
+    remove.className = "danger";
+    remove.textContent = "حذف";
+    remove.onclick = () => deleteAgent(agent.id);
+
+    actions.append(edit,remove);
+    card.append(title,tag,description,date,actions);
+    list.append(card);
+  });
+}
+
+form.addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const name = nameInput.value.trim();
+  const role = roleInput.value.trim();
+  const task = taskInput.value.trim();
+
+  if(!name || !role || !task) return;
+
+  if(editingId !== null){
+    const index = agents.findIndex(a => a.id === editingId);
+    if(index === -1) return;
+
+    agents[index] = {...agents[index],name,role,task};
+  }else{
+    agents.unshift({
+      id: Date.now().toString() + Math.random().toString(36).slice(2,7),
+      name,role,task,
+      created: new Date().toLocaleDateString("fa-IR")
+    });
+  }
+
+  if(saveAgents()){
+    resetForm();
+    render();
+  }
+});
+
+function editAgent(id){
+  const agent = agents.find(a => a.id === id);
+  if(!agent) return;
+
+  editingId = id;
+  nameInput.value = agent.name;
+  roleInput.value = agent.role;
+  taskInput.value = agent.task;
+  saveBtn.textContent = "ذخیره تغییرات";
+  cancelBtn.style.display = "block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function deleteAgent(id){
+  if(!confirm("این ایجنت حذف شود؟")) return;
+
+  const previous = agents;
+  agents = agents.filter(a => a.id !== id);
+
+  if(!saveAgents()){
+    agents = previous;
+    return;
+  }
+
+  if(editingId === id) resetForm();
+  render();
+}
+
+function resetForm(){
+  form.reset();
+  editingId = null;
+  saveBtn.textContent = "＋ ساخت ایجنت";
+  cancelBtn.style.display = "none";
+}
+
+cancelBtn.addEventListener("click",resetForm);
+search.addEventListener("input",render);
+
+loadAgents();
 </script>
 </body>
 </html>
