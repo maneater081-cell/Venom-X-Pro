@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VENOM-X</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#10131b;color:#eee;font-family:Arial,sans-serif}
+header{padding:25px;text-align:center;background:#191f2c;border-bottom:2px solid #00d9a5}
+h1{color:#00d9a5;letter-spacing:3px}
+main{max-width:650px;margin:30px auto;padding:20px}
+.card{background:#1c2331;padding:20px;border-radius:14px}
+textarea{width:100%;height:110px;background:#10131b;color:white;border:1px solid #465268;border-radius:9px;padding:12px;font-size:16px}
+button{background:#00d9a5;color:#10131b;border:0;border-radius:8px;padding:12px 22px;font-weight:bold;margin-top:12px}
+#reply{white-space:pre-wrap;margin-top:20px;line-height:1.9}
+small{color:#9ba8ba}
+</style>
+</head>
+<body>
+<header>
+<h1>VENOM-X</h1>
+<small>YOUR INTELLIGENT AI ASSISTANT</small>
+</header>
+<main>
+<div class="card">
+<h3>خوش آمدی</h3>
+<p>مرکز فرماندهی VENOM-X آماده است.</p>
+<textarea id="message" placeholder="پیام خود را بنویس..."></textarea>
+<br>
+<button onclick="sendMessage()">ارسال پیام</button>
+<div id="reply"></div>
+</div>
+</main>
+<script>
+function sendMessage(){
+const msg=document.getElementById('message').value.trim();
+if(!msg)return;
+document.getElementById('reply').textContent=
+"پیام دریافت شد:\n"+msg+"\n\nاتصال هوش مصنوعی در مرحله بعد راه‌اندازی می‌شود.";
+}
+</script>
+</body>
+</html>
